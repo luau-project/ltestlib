@@ -1,0 +1,35 @@
+package = "@PACKAGE_NAME@"
+version = "@PACKAGE_VERSION@-@PACKAGE_REVISION@"
+
+if ((version:match("^dev")) or (version:match("^scm"))) then
+    source = {
+        url = [=[@PACKAGE_SOURCE_URL@]=],
+        branch = "@PACKAGE_SOURCE_BRANCH@"
+    }
+else
+    source = {
+        url = [=[@PACKAGE_SOURCE_URL@]=],
+        tag = "@PACKAGE_TAG@"
+    }
+end
+
+description = {
+    homepage = [=[@PACKAGE_HOMEPAGE_URL@]=],
+    summary = [[Yet another test library for Lua]],
+    detailed = [=[
+Yes, this is yet another test library for Lua, but with very specific goals.
+
+Visit the repository for more information.]=],
+    license = "Unlicense OR MIT"
+}
+
+dependencies = {
+    "lua >= 5.1"
+}
+
+build = {
+    type = "builtin",
+    modules = {
+        ["@PACKAGE_NAME@"] = "@PACKAGE_NAME@.lua"
+    }
+}

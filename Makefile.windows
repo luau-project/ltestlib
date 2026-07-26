@@ -1,0 +1,260 @@
+#======================================================================================#
+# LICENSE (public domain)                                                              #
+#======================================================================================#
+#                                                                                      #
+# This is free and unencumbered software released into the public domain.              #
+#                                                                                      #
+# Anyone is free to copy, modify, publish, use, compile, sell, or                      #
+# distribute this software, either in source code form or as a compiled                #
+# binary, for any purpose, commercial or non-commercial, and by any                    #
+# means.                                                                               #
+#                                                                                      #
+# In jurisdictions that recognize copyright laws, the author or authors                #
+# of this software dedicate any and all copyright interest in the                      #
+# software to the public domain. We make this dedication for the benefit               #
+# of the public at large and to the detriment of our heirs and                         #
+# successors. We intend this dedication to be an overt act of                          #
+# relinquishment in perpetuity of all present and future rights to this                #
+# software under copyright law.                                                        #
+#                                                                                      #
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,                      #
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF                   #
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.               #
+# IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR                    #
+# OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,                #
+# ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR                #
+# OTHER DEALINGS IN THE SOFTWARE.                                                      #
+#                                                                                      #
+# For more information, please refer to <https://unlicense.org/>                       #
+#                                                                                      #
+#======================================================================================#
+# LICENSE (MIT) on countries that refuse public domain                                 #
+#======================================================================================#
+#                                                                                      #
+# The MIT License (MIT)                                                                #
+#                                                                                      #
+# Copyright (c) 2026 ltestlib contributors https://github.com/luau-project/ltestlib    #
+#                                                                                      #
+# Permission is hereby granted, free of charge, to any person obtaining a copy         #
+# of this software and associated documentation files (the "Software"), to deal        #
+# in the Software without restriction, including without limitation the rights         #
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell            #
+# copies of the Software, and to permit persons to whom the Software is                #
+# furnished to do so, subject to the following conditions:                             #
+#                                                                                      #
+# The above copyright notice and this permission notice shall be included in all       #
+# copies or substantial portions of the Software.                                      #
+#                                                                                      #
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR           #
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,             #
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE          #
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER               #
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,        #
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE        #
+# SOFTWARE.                                                                            #
+#                                                                                      #
+#======================================================================================#
+
+__EMPTY =
+DIRSEP = \$(__EMPTY)
+OPENARGDELIMITER = "
+CLOSEARGDELIMITER = $(OPENARGDELIMITER)
+
+PACKAGE_NAME = ltestlib
+PACKAGE_VERSION = 0.0.1
+PACKAGE_REVISION = 1
+PACKAGE_REPOSITORY_URL = https://github.com/luau-project/$(PACKAGE_NAME)
+PACKAGE_SOURCE_URL = git+$(PACKAGE_REPOSITORY_URL).git
+PACKAGE_SOURCE_BRANCH = main
+PACKAGE_TAG = v$(PACKAGE_VERSION)
+PACKAGE_HOMEPAGE_URL = $(PACKAGE_REPOSITORY_URL)
+ROCKSPEC_EXT = .rockspec
+ROCKSPEC_DIR = rockspecs
+ROCKSPEC_TEMPLATE = $(ROCKSPEC_DIR)$(DIRSEP)rockspec.template
+DEV_ROCKSPEC_VERSION = dev
+DEV_ROCKSPEC_REVISION = 1
+DEV_ROCKSPEC = $(ROCKSPEC_DIR)$(DIRSEP)$(PACKAGE_NAME)-$(DEV_ROCKSPEC_VERSION)-$(DEV_ROCKSPEC_REVISION)$(ROCKSPEC_EXT)
+VERSIONED_ROCKSPEC = $(ROCKSPEC_DIR)$(DIRSEP)$(PACKAGE_NAME)-$(PACKAGE_VERSION)-$(PACKAGE_REVISION)$(ROCKSPEC_EXT)
+
+LUA = lua
+LUAROCKS = luarocks
+LUAROCKSLINTARGS =
+LUAROCKSMAKEARGS =
+
+ADDITION = addition.lua
+TESTDRIVER = test.lua
+
+ADDTOSTDOUT = >>
+TOSTDOUT = >
+
+SED = $(OPENARGDELIMITER)$(PROGRAMFILES)$(DIRSEP)Git$(DIRSEP)usr$(DIRSEP)bin$(DIRSEP)sed.exe$(CLOSEARGDELIMITER)
+SEDEFLAG = -e
+
+ECHO = echo
+ECHOOPENDELIMITER =
+ECHOCLOSEDELIMITER = $(ECHOOPENDELIMITER)
+ECHOESCAPEDELIMITER = '
+ECHOEMPTY = $(ECHO).
+
+RM = del
+RMFLAG =
+
+all: rockspecs
+
+test: gen-test-files
+	-$(LUA) $(TESTDRIVER)
+
+install-dev: $(DEV_ROCKSPEC)
+	$(LUAROCKS) make $(LUAROCKSMAKEARGS) $(DEV_ROCKSPEC)
+
+install: $(VERSIONED_ROCKSPEC)
+	$(LUAROCKS) make $(LUAROCKSMAKEARGS) $(VERSIONED_ROCKSPEC)
+
+uninstall-dev:
+	$(LUAROCKS) remove $(LUAROCKSREMOVEARGS) $(DEV_ROCKSPEC)
+
+uninstall:
+	$(LUAROCKS) remove $(LUAROCKSREMOVEARGS) $(VERSIONED_ROCKSPEC)
+
+gen-test-files: gen-addition gen-test-driver
+
+gen-addition: $(ADDITION)
+
+$(ADDITION):
+	$(ECHO) $(ECHOOPENDELIMITER)local function add(a, b)$(ECHOCLOSEDELIMITER)$(TOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    return a + b$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)end$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)local function increment(v)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    return add(v, 1)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)end$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)local function wrongincrement(v)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    return add(v, 2)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)end$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)local function evenbug(v)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    if ((v % 2) == 0) then$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)        error($(ECHOESCAPEDELIMITER)Even numbers are not allowed.$(ECHOESCAPEDELIMITER))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    end$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    return v$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)end$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)return {$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    add = add,$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    increment = increment,$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    wrongincrement = wrongincrement,$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)    evenbug = evenbug$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHO) $(ECHOOPENDELIMITER)}$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(ADDITION)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(ADDITION)
+
+gen-test-driver: $(TESTDRIVER)
+
+$(TESTDRIVER):
+	$(ECHO) $(ECHOOPENDELIMITER)local $(PACKAGE_NAME) = require($(ECHOESCAPEDELIMITER)$(PACKAGE_NAME)$(ECHOESCAPEDELIMITER))$(ECHOCLOSEDELIMITER)$(TOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)local addition$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- a helper table to store test names$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)local testnames = {}$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- create a test to ensure 'require' works$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)testnames.n1 = $(ECHOESCAPEDELIMITER)addition module should return a table$(ECHOESCAPEDELIMITER)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).new_test(testnames.n1, function()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    addition = require($(ECHOESCAPEDELIMITER)addition$(ECHOESCAPEDELIMITER))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n1, $(ECHOESCAPEDELIMITER)table$(ECHOESCAPEDELIMITER), type(addition))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- create a test to ensure 'add' works$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)testnames.n2 = $(ECHOESCAPEDELIMITER)addition method should return a table$(ECHOESCAPEDELIMITER)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).new_test(testnames.n2, function()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n2, 3, addition.add(1, 2))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n2, 3, addition.add(2, 1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n2, 1, addition.add(-1, 2))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n2, 1, addition.add(2, -1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n2, -3, addition.add(-1, -2))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n2, -3, addition.add(-2, -1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n2, -1, addition.add(1, -2))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n2, -1, addition.add(-2, 1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- create a test to ensure 'increment' works$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)testnames.n3 = $(ECHOESCAPEDELIMITER)increment method should add one to a number$(ECHOESCAPEDELIMITER)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).new_test(testnames.n3, function()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n3, 1, addition.increment(0))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n3, 2, addition.increment(1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n3, 0, addition.increment(-1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- create a test thinking that 'wrongincrement' works like 'increment'$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)testnames.n4 = $(ECHOESCAPEDELIMITER)wrongincrement method should add one to a number$(ECHOESCAPEDELIMITER)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).new_test(testnames.n4, function()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n4, 1, addition.wrongincrement(0))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n4, 2, addition.wrongincrement(1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n4, 0, addition.wrongincrement(-1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- create a test to ensure 'evenbug' returns the provided param when param is odd$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)testnames.n5 = $(ECHOESCAPEDELIMITER)evenbug method should return the provided param when param is an odd number$(ECHOESCAPEDELIMITER)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).new_test(testnames.n5, function()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n5, -1, addition.evenbug(-1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n5, 1, addition.evenbug(1))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_equal(testnames.n5, 3, addition.evenbug(3))$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- create a test to ensure 'evenbug' throws an error once the provided param is even$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)testnames.n6 = $(ECHOESCAPEDELIMITER)evenbug method should throw an error if the provided param is an even number$(ECHOESCAPEDELIMITER)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).new_test(testnames.n6, function()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_throws(testnames.n6, function() addition.evenbug(0) end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_throws(testnames.n6, function() addition.evenbug(2) end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_throws(testnames.n6, function() addition.evenbug(4) end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_throws(testnames.n6, function() addition.evenbug(-2) end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)    $(PACKAGE_NAME).assert_throws(testnames.n6, function() addition.evenbug(-4) end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)end)$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- execute the tests$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).execute()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- collect statistics$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- and print the summary of execution$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).summary()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- finish all the tests$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)-- returning the execution code$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHO) $(ECHOOPENDELIMITER)$(PACKAGE_NAME).finish()$(ECHOCLOSEDELIMITER)$(ADDTOSTDOUT) $(TESTDRIVER)
+	$(ECHOEMPTY)$(ADDTOSTDOUT) $(TESTDRIVER)
+
+lint-rockspecs: lint-dev-rockspec lint-rockspec
+
+lint-dev-rockspec: $(DEV_ROCKSPEC)
+	$(LUAROCKS) lint $(LUAROCKSLINTARGS) $(DEV_ROCKSPEC)
+
+lint-rockspec: $(VERSIONED_ROCKSPEC)
+	$(LUAROCKS) lint $(LUAROCKSLINTARGS) $(VERSIONED_ROCKSPEC)
+
+rockspecs: gen-dev-rockspec gen-rockspec
+
+gen-dev-rockspec: $(DEV_ROCKSPEC)
+
+gen-rockspec: $(VERSIONED_ROCKSPEC)
+
+$(DEV_ROCKSPEC): $(ROCKSPEC_TEMPLATE)
+	$(SED) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_VERSION@|$(DEV_ROCKSPEC_VERSION)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_REVISION@|$(DEV_ROCKSPEC_REVISION)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_REPOSITORY_URL@|$(PACKAGE_REPOSITORY_URL)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_SOURCE_URL@|$(PACKAGE_SOURCE_URL)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_SOURCE_BRANCH@|$(PACKAGE_SOURCE_BRANCH)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_TAG@|$(PACKAGE_TAG)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_HOMEPAGE_URL@|$(PACKAGE_HOMEPAGE_URL)|g$(CLOSEARGDELIMITER) $(ROCKSPEC_TEMPLATE)$(TOSTDOUT) $(DEV_ROCKSPEC)
+
+$(VERSIONED_ROCKSPEC): $(ROCKSPEC_TEMPLATE)
+	$(SED) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_REVISION@|$(PACKAGE_REVISION)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_REPOSITORY_URL@|$(PACKAGE_REPOSITORY_URL)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_SOURCE_URL@|$(PACKAGE_SOURCE_URL)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_SOURCE_BRANCH@|$(PACKAGE_SOURCE_BRANCH)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_TAG@|$(PACKAGE_TAG)|g$(CLOSEARGDELIMITER) $(SEDEFLAG) $(OPENARGDELIMITER)s|@PACKAGE_HOMEPAGE_URL@|$(PACKAGE_HOMEPAGE_URL)|g$(CLOSEARGDELIMITER) $(ROCKSPEC_TEMPLATE)$(TOSTDOUT) $(VERSIONED_ROCKSPEC)
+
+clean-test-files: clean-addition clean-test-driver
+
+clean-addition:
+	-$(RM) $(RMFLAG) $(ADDITION)
+
+clean-test-driver:
+	-$(RM) $(RMFLAG) $(TESTDRIVER)
+
+clean-dev-rockspec:
+	-$(RM) $(RMFLAG) $(DEV_ROCKSPEC)
+
+clean-rockspec:
+	-$(RM) $(RMFLAG) $(VERSIONED_ROCKSPEC)
+
+clean: clean-test-files clean-dev-rockspec clean-rockspec
