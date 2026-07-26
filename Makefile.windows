@@ -57,6 +57,9 @@
 
 __EMPTY =
 DIRSEP = \$(__EMPTY)
+SystemDrive = c:
+WINDIR = $(SystemDrive)$(DIRSEP)windows
+PROGRAMFILES = $(SystemDrive)$(DIRSEP)Program Files
 SHELL = $(WINDIR)$(DIRSEP)System32$(DIRSEP)cmd.exe
 OPENARGDELIMITER = "
 CLOSEARGDELIMITER = $(OPENARGDELIMITER)
