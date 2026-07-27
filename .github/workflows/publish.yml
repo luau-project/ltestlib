@@ -22,7 +22,7 @@ jobs:
         id: version
         run: |
           version=$(grep -oP 'local version = "(\d+\.\d+\.\d+)"' ltestlib.lua | grep -oP '(\d+\.\d+\.\d+)')
-          if [[ $version ~= ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "version=${version}" >> "$GITHUB_OUTPUT"
           else
             echo "version=none" >> "$GITHUB_OUTPUT"
@@ -68,7 +68,7 @@ jobs:
           if [ "${{ github.ref_type }}" = "tag" ]; then
             version=$(echo "${{ github.ref_name }}" | sed -e "s|v||g" | grep -oP '^$(\d+\.\d+\.\d+)$')
 
-            if [[ $version ~= ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               echo "version=${version}" >> "$GITHUB_OUTPUT"
             else
               echo "version=none" >> "$GITHUB_OUTPUT"
