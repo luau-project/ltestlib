@@ -114,8 +114,8 @@ jobs:
       - name: Validate rockspec tag
         run: |
           rockspec_tag=$(lua -e "dofile(arg[0]); io.write(source.tag);" -- "${{ needs.get-latest-rockspec.outputs.rockspec }}")
-          if [ "${rockspec_tag}" != "v${{ github.ref_name }}" ]; then
-            echo "source.tag (${rockspec_tag}) is not v${{ github.ref_name }}";
+          if [ "${rockspec_tag}" != "${{ github.ref_name }}" ]; then
+            echo "source.tag (${rockspec_tag}) is not ${{ github.ref_name }}";
             exit 1;
           fi
 
