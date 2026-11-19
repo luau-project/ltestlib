@@ -4,7 +4,7 @@
 
 * Refactored CI for the new templates;
 * Refactored Makefiles for the new templates;
-* Added docs (\`RELEASES.md\`) providing guidance to publish a new release for \`ltestlib\`.
+* Added docs (`RELEASES.md`) providing guidance to publish a new release for `ltestlib`.
 
 ## ltestlib v0.0.1
 
