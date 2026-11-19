@@ -22,7 +22,7 @@ on:
 
 jobs:
   # Job to extract the library version
-  # defined in the VERSION field
+  # defined in the `version` field
   # on `ltestlib.lua` file.
   #
   # Remark: this job stores `none`
@@ -234,7 +234,7 @@ jobs:
             exit 1
           }
 
-          echo "SRC_ROCK=${srcrock}" >> "$GITHUB_ENV"
+          echo "SRC_ROCK=${srcrock}" >> "${GITHUB_ENV}"
 
       - name: Generate a versioned tarball from the tag
         run: |
