@@ -51,7 +51,7 @@ jobs:
 
       - name: Setup MSVC developer prompt
         uses: step-security/msvc-dev-cmd@22c98154b708dbd743e6f27a933cf6ceba3305c4 # v1.13.1
-        if: runner.os == 'Windows' && matrix.toolchain == 'msvc
+        if: runner.os == 'Windows' && matrix.toolchain == 'msvc'
 
       - name: Install Lua
         uses: luau-project/setup-lua@21cfaee9b36a5aede562293e9cb467397a79c7f5 # v3.1.0
