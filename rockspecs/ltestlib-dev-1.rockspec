@@ -1,17 +1,22 @@
-package = "ltestlib"
-version = "dev-1"
+local rockspec_revision = "1"
+local package_version = "dev"
+local dev_branch = "main"
 
-if ((version:match("^dev")) or (version:match("^scm"))) then
-    source = {
-        url = [=[git+https://github.com/luau-project/ltestlib.git]=],
-        branch = "main"
-    }
-else
-    source = {
-        url = [=[git+https://github.com/luau-project/ltestlib.git]=],
-        tag = "v0.0.1"
-    }
-end
+local is_dev_package = package_version == "dev" or
+                       package_version == "scm" or
+                       package_version == "cvs" or
+                       package_version == "git" or
+                       package_version == "svn" or
+                       package_version == "hg"
+
+package = "ltestlib"
+version = package_version .. "-" .. rockspec_revision
+
+source = {
+    url = [=[git+https://github.com/luau-project/ltestlib.git]=],
+    branch = is_dev_package and dev_branch or nil,
+    tag = (not is_dev_package) and ("v" .. package_version) or nil
+}
 
 description = {
     homepage = [=[https://github.com/luau-project/ltestlib]=],
