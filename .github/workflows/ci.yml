@@ -65,7 +65,7 @@ jobs:
         run: luarocks --version
 
       - name: Lint rockspec and Test through NMake
-        run: nmake /F Makefile.win clean all lint-rockspecs test
+        run: nmake /F Makefile.win clean lint-rockspecs test
         if: runner.os == 'Windows' && matrix.toolchain == 'msvc'
 
       - name: Lint rockspec and Test through GNU Make for MinGW / MinGW-w64
